@@ -8,6 +8,7 @@ import {
   Delete,
   Res,
   HttpStatus,
+  Patch,
 } from '@nestjs/common';
 import { AssessmentService } from './assessment.service';
 import { CreateAssessmentDto } from './dto/create-assessment.dto';
@@ -62,7 +63,7 @@ export class AssessmentController {
     }
   }
 
-  @Put(':id')
+  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateAssessmentDto: CreateAssessmentDto,
@@ -98,6 +99,59 @@ export class AssessmentController {
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ message: 'Internal server error' });
+    }
+  }
+
+  @Get('semesters')
+  async findAllSemesters(@Res() res: Response) {
+    try {
+      const semesters = await this.assessmentService.findAllSemesters();
+      return res.status(HttpStatus.OK).json(semesters);
+    } catch (error) {
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Internal server error' });
+    }
+  }
+
+  @Get('semesters/:id')
+  async findOneSemester(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const semester = await this.assessmentService.findOneSemester(+id);
+      if (!semester) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: 'Semester not found' });
+      }
+      return res.status(HttpStatus.OK).json(semester);
+    } catch (error) {
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Internal server error' });
+    }
+  }
+
+  @Patch('semesters/:id')
+  async updateSemester(
+    @Param('id') id: string,
+    @Body() updateSemesterDto,
+    @Res() res: Response,
+  ) {
+    try {
+      const updatedSemester = await this.assessmentService.updateSemester(
+        +id,
+        updateSemesterDto,
+      );
+      if (!updatedSemester) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: 'Semester not found' });
+      }
+      return res.status(HttpStatus.OK).json(updatedSemester);
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: error.message });
     }
   }
 }

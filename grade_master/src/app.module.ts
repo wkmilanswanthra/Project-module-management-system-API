@@ -9,6 +9,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ProjectModule } from './project/project.module';
 import { AssessmentModule } from './assessment/assessment.module';
+import { RubricModule } from './rubric/rubric.module';
+import { SubmissionModule } from './submission/submission.module';
+import { MarksModule } from './marks/marks.module';
+import { ScheduleModule } from './schedule/schedule.module';
 
 const database = TypeOrmModule.forRoot({
   type: (process.env.DB_TYPE as any) || 'postgres',
@@ -34,6 +38,10 @@ const database = TypeOrmModule.forRoot({
     }),
     ProjectModule,
     AssessmentModule,
+    RubricModule,
+    SubmissionModule,
+    MarksModule,
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],
