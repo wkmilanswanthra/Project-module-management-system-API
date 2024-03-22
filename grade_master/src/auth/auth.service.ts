@@ -8,16 +8,19 @@ import { IAuthenticate } from './interface/auth.interface';
 import { sign } from 'jsonwebtoken';
 import { Role } from './interface/auth.interface';
 import * as bcrypt from 'bcrypt';
+import { Project } from 'src/project/entities/project.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Project)
+    private readonly projectRepository: Repository<Project>,
   ) {}
 
-  async authenticateUser(
-    authenticateDto: AuthenticateDto,
-  ): Promise<IAuthenticate> {
+  async authenticateUser(authenticateDto: AuthenticateDto): Promise<any> {
+    const res: any = {};
+
     const user = await this.userRepository.findOneBy({
       username: authenticateDto.username,
     });
@@ -28,6 +31,29 @@ export class AuthService {
       user.password,
     );
     if (!isMatch) throw new Error('Invalid password');
+
+    if (user.role === Role.STUDENT) {
+      const project = await this.projectRepository.find({
+        where: [
+          { member1: user.id },
+          { member2: user.id },
+          { member3: user.id },
+          { member4: user.id },
+        ],
+        relations: [
+          'supervisor',
+          'coSupervisor',
+          'member1',
+          'member2',
+          'member3',
+          'member4',
+        ],
+      });
+      console.log(project);
+      if (project.length > 0) {
+        res.project = project;
+      }
+    }
     delete user.password;
     delete user.updatedAt;
     delete user.createdAt;
@@ -37,10 +63,8 @@ export class AuthService {
       role: user.role,
     };
     const token = sign(payload, 'secret');
-
-    return {
-      token,
-    };
+    res.token = token;
+    return res;
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<IAuthenticate> {
@@ -58,6 +82,25 @@ export class AuthService {
       };
       const token = sign(payload, 'secret');
       return { token };
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async addUser(createUserDto: CreateUserDto): Promise<void> {
+    try {
+      createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
+      const user = this.userRepository.create(createUserDto);
+      const newUser = await this.userRepository.save(user);
+      delete newUser.password;
+      delete newUser.updatedAt;
+      delete newUser.createdAt;
+      const payload = {
+        id: newUser.id,
+        user: newUser,
+        role: newUser.role,
+      };
+      const token = sign(payload, 'secret');
     } catch (error) {
       throw new Error(error);
     }

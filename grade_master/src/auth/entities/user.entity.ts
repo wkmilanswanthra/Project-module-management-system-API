@@ -38,7 +38,7 @@ export class User {
   @Column({ type: 'varchar', length: 30 })
   contact: string;
 
-  @Column({ type: 'varchar', length: 30, nullable: true })
+  @Column({ type: 'varchar', length: 30, nullable: true, unique: true })
   registrationNumber: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

@@ -31,6 +31,10 @@ export class CreateUserDto {
   @IsOptional()
   batch?: Batch;
 
+  @IsEnum(Role)
+  @IsOptional()
+  role?: Role;
+
   @IsOptional()
   position?: string;
 

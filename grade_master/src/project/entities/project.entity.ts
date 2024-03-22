@@ -23,25 +23,25 @@ export class Project {
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'supervisor' })
-  supervisor: User;
+  supervisor: number;
 
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'coSupervisor' })
-  coSupervisor?: User;
+  coSupervisor?: number;
 
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'member1' })
-  member1?: User;
+  member1?: number;
 
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'member2' })
-  member2?: User;
+  member2?: number;
 
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'member3' })
-  member3?: User;
+  member3?: number;
 
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'member4' })
-  member4?: User;
+  member4?: number;
 }

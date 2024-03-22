@@ -23,9 +23,31 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async create(@Res() res: any, @Body() CreateUserDto: CreateUserDto) {
+  async registerStudent(@Res() res: any, @Body() CreateUserDto: CreateUserDto) {
     try {
       const response = await this.authService.createUser(CreateUserDto);
+      return res.status(201).json(response);
+    } catch (e) {
+      return res.status(400).json({ message: e.message });
+    }
+  }
+
+  @Post('faculty/register')
+  async registerFaculty(@Res() res: any, @Body() CreateUserDto: CreateUserDto) {
+    try {
+      CreateUserDto.role = Role.STAFF;
+      const response = await this.authService.createUser(CreateUserDto);
+      return res.status(201).json(response);
+    } catch (e) {
+      return res.status(400).json({ message: e.message });
+    }
+  }
+
+  @Post('faculty/add')
+  async addFaculty(@Res() res: any, @Body() CreateUserDto: CreateUserDto) {
+    try {
+      CreateUserDto.role = Role.STAFF;
+      const response = await this.authService.addUser(CreateUserDto);
       return res.status(201).json(response);
     } catch (e) {
       return res.status(400).json({ message: e.message });

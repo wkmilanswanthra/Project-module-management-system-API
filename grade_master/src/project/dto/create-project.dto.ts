@@ -12,15 +12,15 @@ export class CreateProjectDto {
   readonly researchGroup: string;
 
   @IsNotEmpty()
-  readonly supervisor: User;
+  readonly supervisor: number;
 
-  readonly coSupervisor?: User;
+  readonly coSupervisor?: number;
 
-  readonly member1?: User;
+  readonly member1?: number;
 
-  readonly member2?: User;
+  readonly member2?: number;
 
-  readonly member3?: User;
+  readonly member3?: number;
 
-  readonly member4?: User;
+  readonly member4?: number;
 }
