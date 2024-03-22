@@ -24,4 +24,7 @@ export class Assessment {
 
   @Column({ type: 'varchar', length: 20 })
   assessmentType: string;
+
+  // @Column({ type: 'timestamp' })
+  // dueDate: Date;
 }

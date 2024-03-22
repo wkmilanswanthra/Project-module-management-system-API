@@ -32,6 +32,9 @@ export class User {
   @Column({ type: 'varchar', length: 30, nullable: true })
   batch: string;
 
+  @Column({ type: 'varchar', length: 30, nullable: true })
+  position: string;
+
   @Column({ type: 'varchar', length: 30 })
   contact: string;
 

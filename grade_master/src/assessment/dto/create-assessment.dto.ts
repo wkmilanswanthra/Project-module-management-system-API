@@ -12,4 +12,7 @@ export class CreateAssessmentDto {
 
   @IsNotEmpty()
   readonly assessmentType: string;
+
+  @IsNotEmpty()
+  readonly dueDate: Date;
 }

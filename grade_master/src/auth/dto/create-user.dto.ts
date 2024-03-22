@@ -31,6 +31,9 @@ export class CreateUserDto {
   @IsOptional()
   batch?: Batch;
 
+  @IsOptional()
+  position?: string;
+
   @IsString()
   @MinLength(10, { message: 'Contact must have atleast 10 characters.' })
   contact: string;

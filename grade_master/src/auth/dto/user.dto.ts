@@ -36,6 +36,9 @@ export class UserDto {
   readonly batch: string;
 
   @IsString()
+  readonly position: string;
+
+  @IsString()
   readonly registrationNumber: string;
 
   @IsString()

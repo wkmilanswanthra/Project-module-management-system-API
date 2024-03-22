@@ -16,6 +16,7 @@ import { JwtAuthGuard } from './helpers/jwt.guard';
 import { Roles } from './roles/roles.decorator';
 import { RoleGuard } from './role/role.guard';
 import { Role } from './interface/auth.interface';
+import { AuthenticateDto } from './dto/authenticate.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -32,9 +33,9 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Res() res: any, @Body() CreateUserDto: CreateUserDto) {
+  async login(@Res() res: any, @Body() AuthenticateDto: AuthenticateDto) {
     try {
-      const response = await this.authService.authenticateUser(CreateUserDto);
+      const response = await this.authService.authenticateUser(AuthenticateDto);
       return res.status(200).json(response);
     } catch (e) {
       return res.status(400).json({ message: e.message });

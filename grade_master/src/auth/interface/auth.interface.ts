@@ -30,6 +30,7 @@ type User = {
   role: Role;
   specialization: Specialization;
   batch: Batch;
+  position: string;
   contact: string;
   registrationNumber: string;
   createdAt: Date;

@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle('Grade Master')
@@ -11,7 +12,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('Grade Master')
     .build();
-
+  app.setGlobalPrefix('api/v1');
   // Create document and serve with Swagger
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
@@ -20,4 +21,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-
