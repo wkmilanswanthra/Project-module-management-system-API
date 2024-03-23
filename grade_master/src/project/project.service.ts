@@ -16,7 +16,36 @@ export class ProjectService {
   }
 
   async findAll(): Promise<Project[]> {
-    return this.projectRepository.find();
+    try {
+      const projects = await this.projectRepository.find({
+        relations: [
+          'supervisor',
+          'coSupervisor',
+          'member1',
+          'member2',
+          'member3',
+          'member4',
+        ],
+      });
+      if (!projects) throw new Error('No projects found');
+      projects.forEach((proj: any) => {
+        delete proj.supervisor.password;
+        delete proj.coSupervisor.password;
+        delete proj.member1.password;
+        delete proj.member2.password;
+        delete proj.member3.password;
+        delete proj.member4.password;
+        delete proj.supervisor.username;
+        delete proj.coSupervisor.username;
+        delete proj.member1.username;
+        delete proj.member2.username;
+        delete proj.member3.username;
+        delete proj.member4.username;
+      });
+      return projects;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   async findOne(id: number): Promise<Project> {

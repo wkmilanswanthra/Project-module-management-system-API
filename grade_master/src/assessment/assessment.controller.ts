@@ -9,15 +9,21 @@ import {
   Res,
   HttpStatus,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { AssessmentService } from './assessment.service';
 import { CreateAssessmentDto } from './dto/create-assessment.dto';
 import { Response } from 'express';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { RoleGuard } from 'src/auth/role/role.guard';
+import { JwtAuthGuard } from 'src/auth/helpers/jwt.guard';
 
 @Controller('assessments')
 export class AssessmentController {
   constructor(private readonly assessmentService: AssessmentService) {}
 
+  @Roles('PROJECT_COORDINATOR', 'MEMBER')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Post()
   async create(
     @Body() createAssessmentDto: CreateAssessmentDto,
@@ -34,6 +40,7 @@ export class AssessmentController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findAll(@Res() res: Response) {
     try {
@@ -46,6 +53,8 @@ export class AssessmentController {
     }
   }
 
+  @Roles('PROJECT_COORDINATOR', 'MEMBER')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -63,6 +72,8 @@ export class AssessmentController {
     }
   }
 
+  @Roles('PROJECT_COORDINATOR', 'MEMBER')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -87,6 +98,8 @@ export class AssessmentController {
     }
   }
 
+  @Roles('PROJECT_COORDINATOR', 'MEMBER')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -102,6 +115,8 @@ export class AssessmentController {
     }
   }
 
+  @Roles('PROJECT_COORDINATOR', 'MEMBER')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Get('semesters')
   async findAllSemesters(@Res() res: Response) {
     try {

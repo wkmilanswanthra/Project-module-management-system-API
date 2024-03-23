@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsNumber } from 'class-validator';
 import { Assessment } from 'src/assessment/entities/assessment.entity';
+import { Timestamp } from 'typeorm';
 
 export class CreateSubmissionDto {
   @IsNotEmpty()
@@ -12,4 +13,7 @@ export class CreateSubmissionDto {
 
   @IsNotEmpty()
   filepath: string;
+
+  @IsNotEmpty()
+  dateSubmitted: Timestamp;
 }

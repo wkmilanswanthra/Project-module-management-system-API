@@ -1,4 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
+import { Timestamp } from 'typeorm';
 
 export class CreateAssessmentDto {
   @IsNotEmpty()
@@ -14,5 +15,5 @@ export class CreateAssessmentDto {
   readonly assessmentType: string;
 
   @IsNotEmpty()
-  readonly dueDate: Date;
+  readonly dueDate: Timestamp;
 }

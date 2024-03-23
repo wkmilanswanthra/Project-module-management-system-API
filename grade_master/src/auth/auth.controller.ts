@@ -68,7 +68,35 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Get()
   async findAll(@Req() req) {
-    return this.authService.findAll();
+    try {
+      return this.authService.findAll();
+    } catch (e) {
+      return { message: e.message };
+    }
+  }
+
+  @Roles('PROJECT_COORDINATOR')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Get('faculty/all')
+  async findAllFaculty(@Res() res: any, @Req() req: any) {
+    try {
+      const users = await this.authService.findAllFaculty();
+      return res.status(200).json(users);
+    } catch (e) {
+      return res.status(400).json({ message: e.message });
+    }
+  }
+
+  @Roles('PROJECT_COORDINATOR')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Get('students/all')
+  async findAllStudents(@Res() res: any, @Req() req: any) {
+    try {
+      const users = await this.authService.findAllStudents();
+      return res.status(200).json(users);
+    } catch (e) {
+      return res.status(400).json({ message: e.message });
+    }
   }
 
   @UseGuards(JwtAuthGuard)

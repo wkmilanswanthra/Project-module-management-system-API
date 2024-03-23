@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  Timestamp,
 } from 'typeorm';
 import { Assessment } from 'src/assessment/entities/assessment.entity';
 import { Project } from 'src/project/entities/project.entity';
@@ -23,4 +24,7 @@ export class Submission {
 
   @Column({ nullable: false })
   filepath: string;
+
+  @Column({ type: 'timestamp' })
+  dateSubmitted: Timestamp;
 }

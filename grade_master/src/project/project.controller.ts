@@ -15,12 +15,15 @@ import { JwtAuthGuard } from '../auth/helpers/jwt.guard';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Response } from 'express';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { RoleGuard } from 'src/auth/role/role.guard';
 
 @Controller('projects')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @Roles('PROJECT_COORDINATOR', 'SUPERVISOR', 'CO_SUPERVISOR')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Post()
   async create(
     @Body() createProjectDto: CreateProjectDto,
@@ -36,6 +39,8 @@ export class ProjectController {
     }
   }
 
+  @Roles('PROJECT_COORDINATOR', 'SUPERVISOR', 'CO_SUPERVISOR')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Get()
   async findAll(@Res() res: Response) {
     try {
@@ -48,6 +53,8 @@ export class ProjectController {
     }
   }
 
+  @Roles('PROJECT_COORDINATOR', 'SUPERVISOR', 'CO_SUPERVISOR')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     try {
@@ -65,7 +72,8 @@ export class ProjectController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Roles('PROJECT_COORDINATOR', 'SUPERVISOR', 'CO_SUPERVISOR')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -90,7 +98,8 @@ export class ProjectController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Roles('PROJECT_COORDINATOR', 'SUPERVISOR', 'CO_SUPERVISOR')
+  @UseGuards(JwtAuthGuard, RoleGuard)
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res: Response) {
     try {

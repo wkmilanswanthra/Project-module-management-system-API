@@ -49,6 +49,14 @@ export class AuthService {
           'member4',
         ],
       });
+      project.forEach((proj: any) => {
+        delete proj.supervisor.password;
+        delete proj.coSupervisor.password;
+        delete proj.member1.password;
+        delete proj.member2.password;
+        delete proj.member3.password;
+        delete proj.member4.password;
+      });
       console.log(project);
       if (project.length > 0) {
         res.project = project;
@@ -107,7 +115,47 @@ export class AuthService {
   }
 
   async findAll(): Promise<User[]> {
-    return this.userRepository.find();
+    const users = await this.userRepository.find();
+    if (!users) {
+      throw new NotFoundException('No user found');
+    }
+    users.forEach((user) => {
+      delete user.password;
+    });
+    return users;
+  }
+
+  async findAllFaculty(): Promise<User[]> {
+    const users = await this.userRepository.find({
+      where: [
+        { role: Role.PROJECT_COORDINATOR },
+        { role: Role.MEMBER },
+        { role: Role.SUPERVISOR },
+        { role: Role.CO_SUPERVISOR },
+        { role: Role.EXAMINER },
+        { role: Role.STAFF },
+      ],
+    });
+    if (!users) {
+      throw new NotFoundException('No user found');
+    }
+    users.forEach((user) => {
+      delete user.password;
+    });
+    return users;
+  }
+
+  async findAllStudents(): Promise<User[]> {
+    const users = await this.userRepository.find({
+      where: [{ role: Role.STUDENT }, { role: Role.PROJECT_LEADER }],
+    });
+    if (!users) {
+      throw new NotFoundException('No user found');
+    }
+    users.forEach((user) => {
+      delete user.password;
+    });
+    return users;
   }
 
   async findOne(id: number): Promise<User> {

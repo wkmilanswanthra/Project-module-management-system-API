@@ -13,6 +13,7 @@ import { RubricModule } from './rubric/rubric.module';
 import { SubmissionModule } from './submission/submission.module';
 import { MarksModule } from './marks/marks.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { PublicationModule } from './publication/publication.module';
 
 const database = TypeOrmModule.forRoot({
   type: (process.env.DB_TYPE as any) || 'postgres',
@@ -42,6 +43,7 @@ const database = TypeOrmModule.forRoot({
     SubmissionModule,
     MarksModule,
     ScheduleModule,
+    PublicationModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],

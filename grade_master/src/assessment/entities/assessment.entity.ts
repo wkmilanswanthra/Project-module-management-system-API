@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  Timestamp,
 } from 'typeorm';
 import { Semester } from './semester.entity';
 
@@ -25,6 +26,6 @@ export class Assessment {
   @Column({ type: 'varchar', length: 20 })
   assessmentType: string;
 
-  // @Column({ type: 'timestamp' })
-  // dueDate: Date;
+  @Column({ type: 'timestamp' })
+  dueDate: Timestamp;
 }
