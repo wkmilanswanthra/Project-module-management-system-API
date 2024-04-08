@@ -37,9 +37,23 @@ export class MarksService {
     }
   }
 
-  async update(id: number, updateMarkDto: CreateMarkDto): Promise<Mark> {
+  async findBySubmissionId(submissionId: number): Promise<Mark> {
     try {
-      await this.markRepository.update(id, updateMarkDto);
+      return this.markRepository.findOne({
+        where: { submissionId },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async update(id: number, updateMarkDto): Promise<Mark> {
+    try {
+      const mark = await this.markRepository.update(id, updateMarkDto);
+      if (!mark) {
+        throw new Error('Mark not found');
+      }
+
       return this.markRepository.findOneBy({ id });
     } catch (error) {
       throw new Error(error);

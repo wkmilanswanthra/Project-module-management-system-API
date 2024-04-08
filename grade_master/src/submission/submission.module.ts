@@ -3,9 +3,10 @@ import { SubmissionService } from './submission.service';
 import { SubmissionController } from './submission.controller';
 import { Submission } from './entities/submission.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Rubric } from 'src/rubric/entities/rubric.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Submission])],
+  imports: [TypeOrmModule.forFeature([Submission, Rubric])],
   controllers: [SubmissionController],
   providers: [SubmissionService],
 })

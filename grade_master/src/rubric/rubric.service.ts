@@ -37,6 +37,21 @@ export class RubricService {
     }
   }
 
+  async findOneByAssessmentId(assessmentId: any): Promise<Rubric> {
+    try {
+      const rubric = await this.rubricRepository.findOne({
+        where: { assessmentId: assessmentId },
+      });
+      if (!rubric) {
+        throw new Error('Rubric not found');
+      }
+
+      return rubric;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async update(id: number, updateRubricDto: CreateRubricDto): Promise<Rubric> {
     try {
       const rubric = await this.rubricRepository.preload({

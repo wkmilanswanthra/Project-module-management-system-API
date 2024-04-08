@@ -4,6 +4,7 @@ import {
   MinLength,
   IsEnum,
   IsOptional,
+  IsObject,
 } from 'class-validator';
 import { Batch, Role, Specialization } from '../interface/auth.interface';
 
@@ -33,7 +34,7 @@ export class CreateUserDto {
 
   @IsEnum(Role)
   @IsOptional()
-  role?: Role;
+  role?: Role[];
 
   @IsOptional()
   position?: string;
@@ -41,6 +42,18 @@ export class CreateUserDto {
   @IsString()
   @MinLength(10, { message: 'Contact must have atleast 10 characters.' })
   contact: string;
+
+  @IsString()
+  @IsOptional()
+  address?: string;
+
+  @IsObject()
+  @IsOptional()
+  al?: any;
+
+  @IsObject()
+  @IsOptional()
+  guardian?: any;
 
   @IsString()
   @IsOptional()

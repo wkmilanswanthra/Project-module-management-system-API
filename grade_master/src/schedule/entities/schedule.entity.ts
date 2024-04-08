@@ -4,11 +4,13 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { Assessment } from 'src/assessment/entities/assessment.entity';
 import { User } from 'src/auth/entities/user.entity';
 
 @Entity()
+@Unique(['date', 'startTime', 'location'])
 export class Schedule {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,7 +23,13 @@ export class Schedule {
   date: Date;
 
   @Column({ type: 'time' })
-  time: string;
+  startTime: string;
+
+  @Column({ type: 'time' })
+  endTime: string;
+
+  @Column({ type: 'varchar' })
+  location: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'examiner1Id' })

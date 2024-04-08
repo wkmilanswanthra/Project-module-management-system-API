@@ -13,6 +13,18 @@ export class CreateScheduleDto {
 
   @IsNotEmpty()
   @IsString()
+  readonly startTime: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly endTime: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly location: string;
+
+  @IsNotEmpty()
+  @IsString()
   readonly time: string;
 
   @IsNotEmpty()

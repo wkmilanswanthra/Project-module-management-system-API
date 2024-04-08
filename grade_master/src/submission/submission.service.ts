@@ -7,12 +7,16 @@ import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { Project } from 'src/project/entities/project.entity';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Rubric } from 'src/rubric/entities/rubric.entity';
 
 @Injectable()
 export class SubmissionService {
   constructor(
     @InjectRepository(Submission)
     private readonly submissionRepository: Repository<Submission>,
+
+    @InjectRepository(Rubric)
+    private readonly rubricRepository: Repository<Rubric>,
   ) {}
 
   async create(
@@ -37,7 +41,9 @@ export class SubmissionService {
 
   async findAll(): Promise<Submission[]> {
     try {
-      return this.submissionRepository.find();
+      return this.submissionRepository.find({
+        relations: ['assessmentId', 'projectId'],
+      });
     } catch (error) {
       throw new Error(error);
     }
@@ -45,7 +51,23 @@ export class SubmissionService {
 
   async findOne(id: number): Promise<Submission> {
     try {
-      return this.submissionRepository.findOneBy({ id });
+      const submission = await this.submissionRepository.findOne({
+        where: { id },
+        relations: [
+          'assessmentId',
+          'projectId',
+          'projectId.member1',
+          'projectId.member2',
+          'projectId.member3',
+          'projectId.member4',
+        ],
+      });
+
+      if (!submission) {
+        throw new Error('Submission not found');
+      }
+
+      return submission;
     } catch (error) {
       throw new Error(error);
     }

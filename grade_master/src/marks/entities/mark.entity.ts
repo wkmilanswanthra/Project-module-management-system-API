@@ -4,10 +4,12 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { Submission } from 'src/submission/entities/submission.entity';
 
 @Entity()
+@Unique(['submissionId'])
 export class Mark {
   @PrimaryGeneratedColumn()
   id: number;

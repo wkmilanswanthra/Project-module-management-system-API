@@ -30,6 +30,15 @@ export class UserDto {
   readonly contact: string;
 
   @IsString()
+  readonly address: string;
+
+  @IsString()
+  readonly al: JSON;
+
+  @IsString()
+  readonly guardian: JSON;
+
+  @IsString()
   readonly specialization: Specialization;
 
   @IsString()

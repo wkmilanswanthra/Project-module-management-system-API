@@ -18,8 +18,8 @@ export class User {
   @Column({ type: 'varchar' })
   password: string;
 
-  @Column({ type: 'varchar', enum: Role, default: Role.STUDENT })
-  role: string;
+  @Column('varchar', { array: true, default: [Role.STUDENT] })
+  role: string[];
 
   @Column({
     type: 'varchar',
@@ -37,6 +37,15 @@ export class User {
 
   @Column({ type: 'varchar', length: 30 })
   contact: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  address: string;
+
+  @Column({ type: 'json', nullable: true })
+  al: any;
+
+  @Column({ type: 'json', nullable: true })
+  guardian: any;
 
   @Column({ type: 'varchar', length: 30, nullable: true, unique: true })
   registrationNumber: string;

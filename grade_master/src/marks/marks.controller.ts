@@ -4,7 +4,7 @@ import {
   Post,
   Body,
   Param,
-  Put,
+  Patch,
   Delete,
   Res,
   HttpStatus,
@@ -57,13 +57,29 @@ export class MarksController {
     }
   }
 
-  @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateMarkDto: CreateMarkDto,
+  @Get('submission/:submissionId')
+  async findBySubmissionId(
+    @Param('submissionId') submissionId: string,
     @Res() res,
   ) {
     try {
+      const marks = await this.markService.findBySubmissionId(+submissionId);
+      return res.status(HttpStatus.OK).json(marks);
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: error.message });
+    }
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateMarkDto: any,
+    @Res() res,
+  ) {
+    try {
+      console.log('updateMarkDto', updateMarkDto);
       const mark = await this.markService.update(+id, updateMarkDto);
       if (!mark) {
         return res

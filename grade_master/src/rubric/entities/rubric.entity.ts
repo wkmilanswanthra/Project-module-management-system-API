@@ -2,8 +2,8 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Assessment } from 'src/assessment/entities/assessment.entity';
 
@@ -15,7 +15,10 @@ export class Rubric {
   @Column('json')
   criteria: any;
 
-  @ManyToOne(() => Assessment)
+  @OneToOne(() => Assessment)
   @JoinColumn({ name: 'assessmentId' })
   assessment: Assessment;
+
+  @Column()
+  assessmentId: number;
 }

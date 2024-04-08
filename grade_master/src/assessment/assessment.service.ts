@@ -25,7 +25,9 @@ export class AssessmentService {
 
   async findAll(): Promise<Assessment[]> {
     try {
-      return this.assessmentRepository.find();
+      return this.assessmentRepository.find({
+        relations: ['semester'],
+      });
     } catch (error) {
       throw error;
     }
@@ -33,7 +35,10 @@ export class AssessmentService {
 
   async findOne(id: number): Promise<Assessment> {
     try {
-      return this.assessmentRepository.findOneBy({ id });
+      return this.assessmentRepository.findOne({
+        where: { id },
+        relations: ['semester'],
+      });
     } catch (error) {
       throw error;
     }

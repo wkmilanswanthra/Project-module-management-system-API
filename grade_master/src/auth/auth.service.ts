@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Any, In, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthenticateDto } from './dto/authenticate.dto';
@@ -21,8 +21,11 @@ export class AuthService {
   async authenticateUser(authenticateDto: AuthenticateDto): Promise<any> {
     const res: any = {};
 
-    const user = await this.userRepository.findOneBy({
-      username: authenticateDto.username,
+    const user = await this.userRepository.findOne({
+      where: [
+        { username: authenticateDto.username },
+        { registrationNumber: authenticateDto.username },
+      ],
     });
 
     if (!user) throw new NotFoundException('User not found');
@@ -32,7 +35,7 @@ export class AuthService {
     );
     if (!isMatch) throw new Error('Invalid password');
 
-    if (user.role === Role.STUDENT) {
+    if (user.role.includes(Role.STUDENT)) {
       const project = await this.projectRepository.find({
         where: [
           { member1: user.id },
@@ -70,6 +73,7 @@ export class AuthService {
       user: user,
       role: user.role,
     };
+    console.log(payload);
     const token = sign(payload, 'secret');
     res.token = token;
     return res;
@@ -126,18 +130,13 @@ export class AuthService {
   }
 
   async findAllFaculty(): Promise<User[]> {
-    const users = await this.userRepository.find({
-      where: [
-        { role: Role.PROJECT_COORDINATOR },
-        { role: Role.MEMBER },
-        { role: Role.SUPERVISOR },
-        { role: Role.CO_SUPERVISOR },
-        { role: Role.EXAMINER },
-        { role: Role.STAFF },
-      ],
-    });
+    const users = await this.userRepository
+      .createQueryBuilder('user')
+      .where(':role = ANY(user.role)', { role: Role.STAFF })
+      .getMany();
+
     if (!users) {
-      throw new NotFoundException('No user found');
+      throw new NotFoundException('No users found');
     }
     users.forEach((user) => {
       delete user.password;
@@ -146,9 +145,10 @@ export class AuthService {
   }
 
   async findAllStudents(): Promise<User[]> {
-    const users = await this.userRepository.find({
-      where: [{ role: Role.STUDENT }, { role: Role.PROJECT_LEADER }],
-    });
+    const users = await this.userRepository
+      .createQueryBuilder('user')
+      .where(':role = ANY(user.role)', { role: Role.STUDENT })
+      .getMany();
     if (!users) {
       throw new NotFoundException('No user found');
     }
@@ -162,7 +162,7 @@ export class AuthService {
     return this.userRepository.findOneBy({ id });
   }
 
-  async updateUserRole(id: number, newRole: string): Promise<void> {
+  async updateUserRole(id: number, newRole: string[]): Promise<void> {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw new NotFoundException('User not found');
@@ -188,13 +188,16 @@ export class AuthService {
     return this.userRepository.save(user);
   }
 
-  async changeUserRole(id: number, newRole: Role): Promise<User> {
+  async changeUserRole(id: number, newRole: Role[]): Promise<User> {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw new NotFoundException('User not found');
     }
+    console.log(id, newRole);
     user.role = newRole;
-    return this.userRepository.save(user);
+    const updatedUser = await this.userRepository.save(user);
+    delete updatedUser.password;
+    return updatedUser;
   }
 
   async findAllByRole(role: Role): Promise<User[]> {

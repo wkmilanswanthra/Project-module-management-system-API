@@ -35,7 +35,8 @@ export class AuthController {
   @Post('faculty/register')
   async registerFaculty(@Res() res: any, @Body() CreateUserDto: CreateUserDto) {
     try {
-      CreateUserDto.role = Role.STAFF;
+      CreateUserDto.role = [];
+      CreateUserDto.role.push(Role.STAFF);
       const response = await this.authService.createUser(CreateUserDto);
       return res.status(201).json(response);
     } catch (e) {
@@ -46,7 +47,8 @@ export class AuthController {
   @Post('faculty/add')
   async addFaculty(@Res() res: any, @Body() CreateUserDto: CreateUserDto) {
     try {
-      CreateUserDto.role = Role.STAFF;
+      CreateUserDto.role = [];
+      CreateUserDto.role.push(Role.STAFF);
       const response = await this.authService.addUser(CreateUserDto);
       return res.status(201).json(response);
     } catch (e) {
@@ -113,9 +115,18 @@ export class AuthController {
 
   @Roles('PROJECT_COORDINATOR')
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Patch(':id/change-role')
-  async changeRole(@Param('id') id: string, @Body('role') newRole: Role) {
-    return this.authService.changeUserRole(+id, newRole);
+  @Patch('change-role/:id')
+  async changeRole(
+    @Res() res,
+    @Param('id') id: string,
+    @Body('roles') newRole: Role[],
+  ) {
+    try {
+      console.log(newRole);
+      return this.authService.updateUserRole(+id, newRole);
+    } catch (e) {
+      return res.status(400).json({ message: e.message });
+    }
   }
 
   @Roles('PROJECT_COORDINATOR')

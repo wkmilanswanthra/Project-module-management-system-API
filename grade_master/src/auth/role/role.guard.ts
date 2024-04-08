@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
 export class RoleGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
-  matchRoles(roles: string[], userRole: string) {
-    return roles.some((role) => role === userRole);
+  matchRoles(roles: string[], userRoles: string[]) {
+    return userRoles.some((userRole) => roles.includes(userRole));
   }
 
   canActivate(
@@ -19,7 +19,7 @@ export class RoleGuard implements CanActivate {
     const user = request.user;
 
     console.log('Roles required:', roles);
-    console.log('User role:', user.role);
+    console.log('User roles:', user.role);
 
     const isAuthorized = this.matchRoles(roles, user.role);
     console.log('Authorization result:', isAuthorized);

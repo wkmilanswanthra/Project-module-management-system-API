@@ -57,6 +57,22 @@ export class RubricController {
         .json({ message: 'Internal server error' });
     }
   }
+  @Get('assessment/:id')
+  async findOneByAssessmentId(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const rubric = await this.rubricService.findOneByAssessmentId(+id);
+      if (!rubric) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: 'Rubric not found' });
+      }
+      return res.status(HttpStatus.OK).json(rubric);
+    } catch (error) {
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Internal server error' });
+    }
+  }
 
   @Put(':id')
   async update(
