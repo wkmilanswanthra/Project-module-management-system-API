@@ -21,7 +21,15 @@ export class ScheduleService {
 
   async findAll(): Promise<Schedule[]> {
     try {
-      return await this.scheduleRepository.find();
+      return await this.scheduleRepository.find({
+        relations: [
+          'examiner1',
+          'examiner2',
+          'examiner3',
+          'assessment',
+          'project',
+        ],
+      });
     } catch (error) {
       throw new Error(error);
     }
@@ -30,6 +38,18 @@ export class ScheduleService {
   async findOne(id: number): Promise<Schedule> {
     try {
       return await this.scheduleRepository.findOneBy({ id });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async findScheduleByAssessmentId(assessmentId: any): Promise<Schedule> {
+    try {
+      const schedule = await this.scheduleRepository.findOne({
+        where: { assessmentId: assessmentId },
+        relations: ['examiner1', 'examiner2', 'examiner3', 'assessment'],
+      });
+      return schedule;
     } catch (error) {
       throw new Error(error);
     }

@@ -66,6 +66,31 @@ export class AuthController {
     }
   }
 
+  @Get('verify-email/:id')
+  async verifyEmail(@Res() res: any, @Param('id') id: string) {
+    try {
+      console.log(id);
+      const response = await this.authService.verifyEmail(id);
+      return res.status(200).json(response);
+    } catch (e) {
+      return res.status(400).json({ message: e.message });
+    }
+  }
+  @Get('email/:id')
+  async sendemail(@Res() res: any, @Param('id') id: string) {
+    try {
+      console.log(id);
+      await this.authService.sendEmail(
+        'wkmswanthra@gmail.com',
+        'Test',
+        `http://localhost:3000/api/v1/auth/verify-email/${id}`,
+      );
+      return res.status(200).json({ message: 'Email sent' });
+    } catch (e) {
+      return res.status(400).json({ message: e.message });
+    }
+  }
+
   @Roles('PROJECT_COORDINATOR')
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Get()
@@ -77,8 +102,7 @@ export class AuthController {
     }
   }
 
-  @Roles('PROJECT_COORDINATOR')
-  @UseGuards(JwtAuthGuard, RoleGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('faculty/all')
   async findAllFaculty(@Res() res: any, @Req() req: any) {
     try {
@@ -89,8 +113,7 @@ export class AuthController {
     }
   }
 
-  @Roles('PROJECT_COORDINATOR')
-  @UseGuards(JwtAuthGuard, RoleGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('students/all')
   async findAllStudents(@Res() res: any, @Req() req: any) {
     try {

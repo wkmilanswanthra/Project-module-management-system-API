@@ -8,6 +8,10 @@ export class CreateScheduleDto {
   readonly assessmentId: number;
 
   @IsNotEmpty()
+  @IsNumber()
+  readonly projectId: number;
+
+  @IsNotEmpty()
   @IsDate()
   readonly date: Date;
 

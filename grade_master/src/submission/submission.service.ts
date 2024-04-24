@@ -42,7 +42,20 @@ export class SubmissionService {
   async findAll(): Promise<Submission[]> {
     try {
       return this.submissionRepository.find({
-        relations: ['assessmentId', 'projectId'],
+        relations: ['assessmentId', 'project'],
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async findAllSubmissionsByProjectId(
+    projectId: number,
+  ): Promise<Submission[]> {
+    try {
+      return this.submissionRepository.find({
+        where: { projectId: projectId },
+        relations: ['assessmentId', 'project'],
       });
     } catch (error) {
       throw new Error(error);
@@ -55,11 +68,11 @@ export class SubmissionService {
         where: { id },
         relations: [
           'assessmentId',
-          'projectId',
-          'projectId.member1',
-          'projectId.member2',
-          'projectId.member3',
-          'projectId.member4',
+          'project',
+          'project.member1',
+          'project.member2',
+          'project.member3',
+          'project.member4',
         ],
       });
 

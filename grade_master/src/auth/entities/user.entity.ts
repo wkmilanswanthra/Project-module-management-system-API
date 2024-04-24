@@ -59,4 +59,7 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @Column({ type: 'boolean', default: false })
+  isVerified: boolean;
 }

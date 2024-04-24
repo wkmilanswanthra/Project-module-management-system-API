@@ -22,8 +22,7 @@ import { RoleGuard } from 'src/auth/role/role.guard';
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
-  @Roles('PROJECT_COORDINATOR', 'SUPERVISOR', 'CO_SUPERVISOR')
-  @UseGuards(JwtAuthGuard, RoleGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @Body() createProjectDto: CreateProjectDto,

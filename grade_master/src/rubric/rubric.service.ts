@@ -23,7 +23,9 @@ export class RubricService {
 
   async findAll(): Promise<Rubric[]> {
     try {
-      return this.rubricRepository.find();
+      return this.rubricRepository.find({
+        relations: ['assessment'],
+      });
     } catch (error) {
       console.log(error);
     }

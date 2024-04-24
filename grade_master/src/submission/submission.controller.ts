@@ -51,6 +51,28 @@ export class SubmissionController {
     return this.submissionService.findOne(+id);
   }
 
+  @Get('project/:projectId')
+  async findAllSubmissionsByProjectId(
+    @Param('projectId') projectId: string,
+    @Res() res: any,
+  ) {
+    try {
+      console.log('projectId', projectId);
+      const submissions =
+        await this.submissionService.findAllSubmissionsByProjectId(+projectId);
+      if (!submissions.length) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: 'No submissions found' });
+      }
+      return res.status(HttpStatus.OK).json(submissions);
+    } catch (error) {
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Internal server error' });
+    }
+  }
+
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() res) {
     try {

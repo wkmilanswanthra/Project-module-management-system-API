@@ -20,6 +20,9 @@ export class Submission {
 
   @ManyToOne(() => Project)
   @JoinColumn({ name: 'projectId' })
+  project: Project;
+
+  @Column()
   projectId: number;
 
   @Column({ nullable: false })

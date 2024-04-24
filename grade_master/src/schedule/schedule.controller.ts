@@ -8,6 +8,7 @@ import {
   Delete,
   Res,
   HttpStatus,
+  Patch,
 } from '@nestjs/common';
 import { ScheduleService } from './schedule.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
@@ -57,7 +58,28 @@ export class ScheduleController {
     }
   }
 
-  @Put(':id')
+  @Get('assessment/:assessmentId')
+  async findScheduleByAssessmentId(
+    @Param('assessmentId') assessmentId: string,
+    @Res() res,
+  ) {
+    try {
+      const schedule =
+        await this.scheduleService.findScheduleByAssessmentId(+assessmentId);
+      if (!schedule) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: 'No schedules found' });
+      }
+      return res.status(HttpStatus.OK).json(schedule);
+    } catch (error) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: error.message });
+    }
+  }
+
+  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateScheduleDto: CreateScheduleDto,

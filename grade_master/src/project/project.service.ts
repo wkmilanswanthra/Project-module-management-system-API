@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Project } from './entities/project.entity';
+import { relative } from 'path';
 
 @Injectable()
 export class ProjectService {
@@ -10,9 +11,38 @@ export class ProjectService {
     private readonly projectRepository: Repository<Project>,
   ) {}
 
-  async create(projectData: Partial<Project>): Promise<Project> {
+  async create(projectData: Partial<Project>): Promise<Project[]> {
     const project = this.projectRepository.create(projectData);
-    return this.projectRepository.save(project);
+    const { member1Id, member2Id, member3Id, member4Id } = projectData;
+    const existingProject = await this.projectRepository
+      .createQueryBuilder('project')
+      .where('project.member1Id = :member1Id', { member1Id })
+      .orWhere('project.member2Id = :member2Id', { member2Id })
+      .orWhere('project.member3Id = :member3Id', { member3Id })
+      .orWhere('project.member4Id = :member4Id', { member4Id })
+      .getOne();
+
+    if (existingProject) {
+      throw new Error(
+        'One or more members are already part of another project',
+      );
+    }
+    const { id } = await this.projectRepository.save(project);
+    console.log(id);
+    const newProject = await this.projectRepository.find({
+      where: { id },
+      relations: [
+        'supervisor',
+        'coSupervisor',
+        'member1',
+        'member2',
+        'member3',
+        'member4',
+      ],
+    });
+    console.log(newProject);
+    if (!newProject) throw new Error('Project not created');
+    return newProject;
   }
 
   async findAll(): Promise<Project[]> {

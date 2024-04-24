@@ -5,10 +5,11 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthenticateDto } from './dto/authenticate.dto';
 import { IAuthenticate } from './interface/auth.interface';
-import { sign } from 'jsonwebtoken';
+import { sign, decode } from 'jsonwebtoken';
 import { Role } from './interface/auth.interface';
 import * as bcrypt from 'bcrypt';
 import { Project } from 'src/project/entities/project.entity';
+import { createTransport, createTestAccount } from 'nodemailer';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,28 @@ export class AuthService {
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
   ) {}
+
+  async sendEmail(email: string, subject: string, link: any) {
+    const testAccount = await createTestAccount();
+    const transporter = createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      auth: {
+        user: 'jana.morissette@ethereal.email',
+        pass: 'uNBqR1NZkTWjQEzE5V',
+      },
+    });
+    const info = await transporter.sendMail({
+      from: 'grademaster@gmail.com',
+      to: email,
+      subject: subject,
+      text: 'Click the link to verify your email: ',
+      html: `<a href="${link}">Click here to verify your email</a>`,
+    });
+    console.log('Message sent: %s', info.messageId);
+    console.log('Preview URL: %s', info.response);
+    console.log('Preview URL: %s', info);
+  }
 
   async authenticateUser(authenticateDto: AuthenticateDto): Promise<any> {
     const res: any = {};
@@ -38,10 +61,10 @@ export class AuthService {
     if (user.role.includes(Role.STUDENT)) {
       const project = await this.projectRepository.find({
         where: [
-          { member1: user.id },
-          { member2: user.id },
-          { member3: user.id },
-          { member4: user.id },
+          { member1Id: user.id },
+          { member2Id: user.id },
+          { member3Id: user.id },
+          { member4Id: user.id },
         ],
         relations: [
           'supervisor',
@@ -52,6 +75,7 @@ export class AuthService {
           'member4',
         ],
       });
+
       project.forEach((proj: any) => {
         delete proj.supervisor.password;
         delete proj.coSupervisor.password;
@@ -84,6 +108,8 @@ export class AuthService {
       createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
       const user = this.userRepository.create(createUserDto);
       const newUser = await this.userRepository.save(user);
+      const link = `http://localhost:3000/api/v1/auth/verify-email/${newUser.id}`;
+      await this.sendEmail(newUser.email, 'Verify Email', link);
       delete newUser.password;
       delete newUser.updatedAt;
       delete newUser.createdAt;
@@ -97,6 +123,20 @@ export class AuthService {
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  emailRegex = /^[a-zA-Z0-9._%+-]+@(?:my\.)?sliit\.lk$/;
+
+  async verifyEmail(id: string): Promise<any> {
+    const user = await this.userRepository.findOne({
+      where: { id: parseInt(id) },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    user.isVerified = true;
+    await this.userRepository.save(user);
+    return { message: 'Email verified' };
   }
 
   async addUser(createUserDto: CreateUserDto): Promise<void> {
@@ -167,7 +207,9 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
+    if (!user.isVerified) {
+      throw new Error('User is not verified');
+    }
     user.role = newRole;
     await this.userRepository.save(user);
   }
@@ -203,4 +245,6 @@ export class AuthService {
   async findAllByRole(role: Role): Promise<User[]> {
     return this.userRepository.find({ where: { role } });
   }
+
+  cosnt;
 }

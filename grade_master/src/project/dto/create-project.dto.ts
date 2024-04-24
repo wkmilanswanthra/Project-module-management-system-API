@@ -16,11 +16,11 @@ export class CreateProjectDto {
 
   readonly coSupervisor?: number;
 
-  readonly member1?: number;
+  readonly member1Id?: number;
 
-  readonly member2?: number;
+  readonly member2Id?: number;
 
-  readonly member3?: number;
+  readonly member3Id?: number;
 
-  readonly member4?: number;
+  readonly member4Id?: number;
 }
