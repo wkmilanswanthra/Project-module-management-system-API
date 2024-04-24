@@ -15,6 +15,12 @@ export class PublicationService {
   ) {}
 
   async create(createPublicationDto: CreatePublicationDto): Promise<any> {
+    const imageVerfied = await this.verifyImage(
+      createPublicationDto.confirmationPhotoPath,
+    );
+    if (!imageVerfied) {
+      throw new Error('Invalid confirmation letter');
+    }
     const publication = this.publicationRepository.create(createPublicationDto);
     console.log('mem', publication.members);
     console.log('publication', publication);
@@ -54,27 +60,33 @@ export class PublicationService {
     await this.publicationRepository.remove(publication);
   }
 
-  private async storeFile(file): Promise<string> {
-    if (!file) {
-      return null;
-    }
-    console.log('file', file);
-    const timestamp = new Date().getTime();
-    const originalName = file;
-    const uniqueFileName = `${timestamp}_${originalName}`;
+  // private async storeFile(file): Promise<string> {
+  //   if (!file) {
+  //     return null;
+  //   }
+  //   console.log('file', file);
+  //   const timestamp = new Date().getTime();
+  //   const originalName = file;
+  //   const uniqueFileName = `${timestamp}_${originalName}`;
 
-    const uploadDir = path.join(__dirname, '..', 'uploads');
-    console.log('uploadDir', uploadDir);
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+  //   const uploadDir = path.join(__dirname, '..', 'uploads');
+  //   console.log('uploadDir', uploadDir);
+  //   if (!fs.existsSync(uploadDir)) {
+  //     fs.mkdirSync(uploadDir, { recursive: true });
+  //   }
 
-    const filePath = path.join(uploadDir, uniqueFileName);
-    try {
-      fs.writeFileSync(filePath, file.buffer);
-    } catch (error) {
-      throw new Error(error);
-    }
-    return filePath;
+  //   const filePath = path.join(uploadDir, uniqueFileName);
+  //   try {
+  //     fs.writeFileSync(filePath, file.buffer);
+  //   } catch (error) {
+  //     throw new Error(error);
+  //   }
+  //   return filePath;
+  // }
+
+  private async verifyImage(path: string): Promise<boolean> {
+    const image = fs.readFileSync(path);
+
+    return true;
   }
 }
