@@ -22,8 +22,7 @@ import { JwtAuthGuard } from 'src/auth/helpers/jwt.guard';
 export class SemesterController {
   constructor(private readonly assessmentService: AssessmentService) {}
 
-  @Roles('PROJECT_COORDINATOR', 'MEMBER')
-  @UseGuards(JwtAuthGuard, RoleGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findAllSemesters(@Res() res: Response) {
     try {

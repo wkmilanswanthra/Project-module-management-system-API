@@ -42,7 +42,7 @@ export class SubmissionService {
   async findAll(): Promise<Submission[]> {
     try {
       return this.submissionRepository.find({
-        relations: ['assessmentId', 'project'],
+        relations: ['assessment', 'project'],
       });
     } catch (error) {
       throw new Error(error);
@@ -55,7 +55,7 @@ export class SubmissionService {
     try {
       return this.submissionRepository.find({
         where: { projectId: projectId },
-        relations: ['assessmentId', 'project'],
+        relations: ['assessment', 'project'],
       });
     } catch (error) {
       throw new Error(error);
@@ -67,7 +67,7 @@ export class SubmissionService {
       const submission = await this.submissionRepository.findOne({
         where: { id },
         relations: [
-          'assessmentId',
+          'assessment',
           'project',
           'project.member1',
           'project.member2',

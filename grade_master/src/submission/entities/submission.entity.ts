@@ -16,6 +16,9 @@ export class Submission {
 
   @ManyToOne(() => Assessment)
   @JoinColumn({ name: 'assessmentId' })
+  assessment: Assessment;
+
+  @Column()
   assessmentId: number;
 
   @ManyToOne(() => Project)
