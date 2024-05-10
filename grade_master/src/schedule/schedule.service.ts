@@ -3,16 +3,26 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Schedule } from './entities/schedule.entity';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
+import { Submission } from 'src/submission/entities/submission.entity';
 
 @Injectable()
 export class ScheduleService {
   constructor(
     @InjectRepository(Schedule)
     private readonly scheduleRepository: Repository<Schedule>,
+
+    @InjectRepository(Submission)
+    private readonly submissionRepository: Repository<Submission>,
   ) {}
 
   async create(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
     try {
+      const submission = this.submissionRepository.save({
+        assessmentId: createScheduleDto.assessmentId,
+        projectId: createScheduleDto.projectId,
+        filepath: '',
+        dateSubmitted: `${createScheduleDto.date} ${createScheduleDto.startTime}`,
+      });
       return await this.scheduleRepository.save(createScheduleDto);
     } catch (error) {
       throw new Error(error);

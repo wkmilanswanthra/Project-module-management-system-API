@@ -1,13 +1,15 @@
 // submission.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Timestamp } from 'typeorm';
 import { Submission } from './entities/submission.entity';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { Project } from 'src/project/entities/project.entity';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Rubric } from 'src/rubric/entities/rubric.entity';
+import { Role } from 'src/auth/interface/auth.interface';
+import { Schedule } from 'src/schedule/entities/schedule.entity';
 
 @Injectable()
 export class SubmissionService {
@@ -17,6 +19,9 @@ export class SubmissionService {
 
     @InjectRepository(Rubric)
     private readonly rubricRepository: Repository<Rubric>,
+
+    @InjectRepository(Schedule)
+    private readonly scheduleRepository: Repository<Schedule>,
   ) {}
 
   async create(
@@ -39,11 +44,43 @@ export class SubmissionService {
     }
   }
 
-  async findAll(): Promise<Submission[]> {
+  async findAll(role: any, id: string): Promise<Submission[]> {
     try {
-      return this.submissionRepository.find({
-        relations: ['assessment', 'project'],
+      console.log('roles', role);
+      console.log('id', id);
+      const submissions = await this.submissionRepository.find({
+        relations: [
+          'assessment',
+          'project',
+          'project.supervisor',
+          'project.coSupervisor',
+        ],
       });
+      if (role == Role.EXAMINER) {
+        const schedule = await this.scheduleRepository.find({
+          where: [
+            { examiner1Id: parseInt(id) },
+            { examiner2Id: parseInt(id) },
+            { examiner3Id: parseInt(id) },
+          ],
+        });
+        const filteredSubmissions = submissions.filter(
+          (submission) =>
+            submission.assessment.assessmentType === 'Presentation' &&
+            schedule.some((s) => s.assessmentId === submission.assessmentId),
+        );
+        return filteredSubmissions;
+      }
+      if (role == Role.SUPERVISOR || role == Role.CO_SUPERVISOR) {
+        const filteredSubmissions = submissions.filter(
+          (submission) =>
+            (submission.assessment.assessmentType === 'Report' &&
+              (submission.project.supervisor as any).id === parseInt(id)) ||
+            (submission.project.coSupervisor as any).id === parseInt(id),
+        );
+        return filteredSubmissions;
+      }
+      return submissions;
     } catch (error) {
       throw new Error(error);
     }

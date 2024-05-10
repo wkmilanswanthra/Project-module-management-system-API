@@ -10,15 +10,21 @@ import {
   UploadedFile,
   Res,
   HttpStatus,
+  UseGuards,
+  Headers,
+  Query,
 } from '@nestjs/common';
 import { SubmissionService } from './submission.service';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from 'src/auth/helpers/jwt.guard';
+import { decode } from 'jsonwebtoken';
 
 @Controller('submissions')
 export class SubmissionController {
   constructor(private readonly submissionService: SubmissionService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async create(
@@ -41,16 +47,21 @@ export class SubmissionController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  async findAll() {
-    return this.submissionService.findAll();
+  async findAll(@Headers() headers: any, @Query() query) {
+    const token = headers.authorization.split(' ')[1];
+    const decoded = decode(token) as any;
+    return this.submissionService.findAll(query.role, decoded?.user.id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.submissionService.findOne(+id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('project/:projectId')
   async findAllSubmissionsByProjectId(
     @Param('projectId') projectId: string,
