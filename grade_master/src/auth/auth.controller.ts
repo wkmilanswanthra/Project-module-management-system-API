@@ -28,6 +28,7 @@ export class AuthController {
       const response = await this.authService.createUser(CreateUserDto);
       return res.status(201).json(response);
     } catch (e) {
+      console.log('error', e);
       return res.status(400).json({ message: e.message });
     }
   }

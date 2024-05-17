@@ -121,6 +121,7 @@ export class AuthService {
       const token = sign(payload, 'secret');
       return { token };
     } catch (error) {
+      console.log(error);
       throw new Error(error);
     }
   }
