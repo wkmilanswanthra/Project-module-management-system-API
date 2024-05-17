@@ -17,11 +17,24 @@ export class ScheduleService {
 
   async create(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
     try {
+      const sub = await this.submissionRepository.findOne({
+        where: {
+          assessmentId: createScheduleDto.assessmentId,
+          projectId: createScheduleDto.projectId,
+        },
+      });
+      if (sub) {
+        throw new Error('Schedule already exists');
+      }
+
+      const dateTimeString = `${createScheduleDto.date}T${createScheduleDto.startTime}:00`;
+      const dateSubmitted = new Date(dateTimeString);
+
       const submission = this.submissionRepository.save({
         assessmentId: createScheduleDto.assessmentId,
         projectId: createScheduleDto.projectId,
         filepath: '',
-        dateSubmitted: `${createScheduleDto.date} ${createScheduleDto.startTime}`,
+        dateSubmitted,
       });
       return await this.scheduleRepository.save(createScheduleDto);
     } catch (error) {
@@ -79,6 +92,21 @@ export class ScheduleService {
 
   async remove(id: number): Promise<void> {
     try {
+      const schedule = await this.scheduleRepository.findOneBy({ id });
+      if (!schedule) {
+        throw new Error('Schedule not found');
+      }
+
+      const submissions = await this.submissionRepository.findOne({
+        where: {
+          assessmentId: schedule.assessmentId,
+          projectId: schedule.projectId,
+        },
+      });
+      if (!submissions) {
+        throw new Error('Submission not found');
+      }
+      await this.submissionRepository.delete(submissions.id);
       await this.scheduleRepository.delete(id);
     } catch (error) {
       throw new Error(error);

@@ -5,11 +5,13 @@ import {
   ManyToOne,
   JoinColumn,
   Timestamp,
+  Unique,
 } from 'typeorm';
 import { Assessment } from 'src/assessment/entities/assessment.entity';
 import { Project } from 'src/project/entities/project.entity';
 
 @Entity()
+@Unique(['assessmentId', 'projectId'])
 export class Submission {
   @PrimaryGeneratedColumn()
   id: number;
