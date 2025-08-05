@@ -67,6 +67,9 @@ cd Project-module-management-system-API
 npm install
 # or
 pnpm install
+```
+
+---
 
 ## ⚙️ Environment Setup
 
@@ -79,26 +82,32 @@ DATABASE_USER=your_db_user
 DATABASE_PASSWORD=your_db_password
 DATABASE_NAME=grade_master
 JWT_SECRET=your_secret_key
-PORT=3000```
+PORT=3000
+```
+
+---
 
 ▶️ Running the Project
 Development Mode
-bash
-Copy
-Edit
+```bash
 npm run start:dev
+```
+
+---
 
 📚 API Documentation
 Swagger documentation is available at:
 
-bash
-Copy
-Edit
+```bash
 http://localhost:3000/api
+```
 Explore and test endpoints interactively.
 
+
+---
+
 🗂 Project Structure
-bash
+```bash
 Copy
 Edit
 src/
@@ -107,3 +116,4 @@ src/
  ├── common/           # Shared utilities, interceptors, pipes
  ├── modules/          # Project module management logic
  ├── main.ts           # Application entry point
+```
